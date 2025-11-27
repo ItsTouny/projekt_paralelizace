@@ -6,7 +6,7 @@ Description: This crawler downloads content from web pages (title and meta descr
              downloads. The URL queue is thread-safe (queue.Queue), and CSV writes are
              protected by a Lock to prevent conflicts.
 """
-
+import json
 import os
 import threading
 import queue
@@ -17,6 +17,10 @@ import csv
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 output_file = os.path.join(PROJECT_ROOT, "results.csv")
+CONFIG_FILE = os.path.join(PROJECT_ROOT+"/config", "config.json")
+
+with open(CONFIG_FILE, "r", encoding="utf-8") as f:
+    config = json.load(f)
 
 if os.path.exists(output_file):
     os.remove(output_file)
@@ -26,42 +30,8 @@ url_queue = queue.Queue()
 output_file = "results.csv"
 lock = threading.Lock()
 
-base_domains = [
-    "https://www.wikipedia.org",
-    "https://www.python.org",
-    "https://www.djangoproject.com",
-    "https://flask.palletsprojects.com",
-    "https://realpython.com",
-    "https://www.stackoverflow.com",
-    "https://www.github.com",
-    "https://www.medium.com",
-    "https://towardsdatascience.com",
-    "https://www.kaggle.com",
-    "https://www.nature.com",
-    "https://www.sciencedaily.com",
-    "https://www.bbc.com",
-    "https://www.cnn.com",
-    "https://www.nytimes.com",
-    "https://www.reuters.com",
-    "https://www.theverge.com",
-    "https://www.wired.com",
-    "https://www.techcrunch.com",
-    "https://www.engadget.com",
-]
-
-paths = [
-    "",
-    "/about",
-    "/contact",
-    "/news",
-    "/articles",
-    "/blog",
-    "/tutorials",
-    "/education",
-    "/science",
-    "/technology",
-]
-
+base_domains = config["base_domains"]
+paths = config["paths"]
 urls = []
 
 for domain in base_domains:
