@@ -14,7 +14,10 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 
-output_file = "results.csv"
+
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+output_file = os.path.join(PROJECT_ROOT, "results.csv")
+
 if os.path.exists(output_file):
     os.remove(output_file)
 
@@ -88,7 +91,7 @@ def crawl_worker():
                 title = soup.title.string
             description_tag = soup.find("meta", {"name": "description"})
             description = "No description"
-            if description_tag:
+            if description_tag and description_tag["content"] != "":
                 description = description_tag["content"]
 
             with lock:
